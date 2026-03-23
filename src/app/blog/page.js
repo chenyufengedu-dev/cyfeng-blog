@@ -1,23 +1,5 @@
 import Link from "next/link";
-
-const blogPosts = [
-  {
-    id: 1,
-    title: "我的第一篇博客：Next.js 与 Tailwind 搭建历程",
-    date: "2026-03-22",
-    summary:
-      "记录了我如何从零开始，使用 Next.js App Router 和 Tailwind CSS 搭建个人博客骨架的过程。",
-    slug: "my-first-blog-post",
-  },
-  {
-    id: 2,
-    title: "深入理解 CSS 盒模型与 Flexbox 排版",
-    date: "2026-03-18",
-    summary:
-      "探讨了 Margin 与 Padding 的本质区别，以及如何利用 Flexbox 实现各种复杂的对齐需求。",
-    slug: "understanding-box-model-and-flexbox",
-  },
-];
+import { blogPosts } from "@/lib/data";
 
 export default function BlogPage() {
   return (
