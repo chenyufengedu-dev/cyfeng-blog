@@ -1,28 +1,57 @@
-// 1. 将原本写在列表页的数据剪切到这里，并增加了一点文章正文内容 (content)
-export const blogPosts = [
-  {
-    id: 1,
-    title: "我的第一篇博客：Next.js 与 Tailwind 搭建历程",
-    date: "2026-03-22",
-    summary:
-      "记录了我如何从零开始，使用 Next.js App Router 和 Tailwind CSS 搭建个人博客骨架的过程。",
-    content:
-      "这是第一篇文章的完整正文。在这里我们可以写很长很长的段落。目前先用这段纯文本占位，后续我们会引入 Markdown 解析器，让这里能够渲染加粗、代码块和图片。",
-    slug: "my-first-blog-post",
-  },
-  {
-    id: 2,
-    title: "深入理解 CSS 盒模型与 Flexbox 排版",
-    date: "2026-03-18",
-    summary:
-      "探讨了 Margin 与 Padding 的本质区别，以及如何利用 Flexbox 实现各种复杂的对齐需求。",
-    content:
-      "这是第二篇文章的正文。Margin 用来推开别人，Padding 用来撑大自己。Flexbox 则是一个非常强大的排版工具，能解决 90% 的对齐问题。",
-    slug: "understanding-box-model-and-flexbox",
-  },
-];
+import fs from "fs";
+import path from "path";
+import matter from "gray-matter";
 
-// 2. 导出一个专门用来“通过 slug 查找单篇文章”的工具函数
+// 1. 定义存储 Markdown 文件的绝对路径 (定位到 src/posts)
+const postsDirectory = path.join(process.cwd(), "src/posts");
+
+// 2. 获取所有博客文章的列表数据（用于博客列表页）
+export function getAllBlogPosts() {
+  // 读取目录下的所有文件名
+  const fileNames = fs.readdirSync(postsDirectory);
+
+  const allPostsData = fileNames
+    .filter((fileName) => fileName.endsWith(".md")) // 过滤掉非 .md 文件
+    .map((fileName) => {
+      // 去掉文件名中的 ".md" 后缀，剩下的部分直接作为路由的 slug
+      const slug = fileName.replace(/\.md$/, "");
+
+      // 组合出文件的完整物理路径并读取内容
+      const fullPath = path.join(postsDirectory, fileName);
+      const fileContents = fs.readFileSync(fullPath, "utf8");
+
+      // 使用 gray-matter 解析文件顶部的 Frontmatter 元数据
+      const matterResult = matter(fileContents);
+
+      // 返回该文章的摘要信息（不含正文，减轻列表页的数据负担）
+      return {
+        slug,
+        ...matterResult.data, // 展开 title, date, summary 等数据
+      };
+    });
+
+  // 按照日期从新到旧降序排列
+  return allPostsData.sort((a, b) => {
+    return a.date < b.date ? 1 : -1;
+  });
+}
+
+// 3. 根据 slug 获取单篇文章的完整内容（用于博客详情页）
 export function getPostBySlug(slug) {
-  return blogPosts.find((post) => post.slug === slug);
+  try {
+    const fullPath = path.join(postsDirectory, `${slug}.md`);
+    const fileContents = fs.readFileSync(fullPath, "utf8");
+
+    // matterResult.data 是顶部元数据，matterResult.content 是正文
+    const matterResult = matter(fileContents);
+
+    return {
+      slug,
+      content: matterResult.content, // 详情页需要渲染完整的正文
+      ...matterResult.data,
+    };
+  } catch (error) {
+    // 如果由于网址输入错误找不到对应的 md 文件，返回 null 触发 404
+    return null;
+  }
 }

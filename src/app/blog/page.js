@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { blogPosts } from "@/lib/data";
+import { getAllBlogPosts } from "@/lib/data";
 
 export default function BlogPage() {
+  // 在组件内部调用该函数，动态获取所有文章数据
+  const blogPosts = getAllBlogPosts();
+
   return (
     <div className="max-w-3xl mx-auto px-6 py-16">
       <header className="mb-12">
@@ -17,7 +20,7 @@ export default function BlogPage() {
       <div className="flex flex-col gap-6">
         {blogPosts.map((post) => (
           <article
-            key={post.id}
+            key={post.slug}
             // 核心卡片样式：
             // bg-white: 确保卡片内部是纯白，如果未来你的网页背景变成浅灰，卡片会凸显出来
             // border border-slate-200 rounded-2xl: 浅灰边框，16px大圆角

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPostBySlug } from "@/lib/data";
 import { notFound } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 
 // 这里的 { params } 是 Next.js 自动传入的参数对象
 export default async function BlogPostPage({ params }) {
@@ -56,8 +57,9 @@ export default async function BlogPostPage({ params }) {
         </h1>
       </header>
 
-      <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed">
-        <p>{post.content}</p>
+      {/* prose-pre Typography 插件的作用域修饰符 用于自定义 Markdown 解析后多行代码块的外观 */}
+      <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed prose-pre:bg-[#1e1e1e] prose-pre:text-slate-300">
+        <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
     </div>
   );
