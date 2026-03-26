@@ -1,5 +1,5 @@
 ---
-title: "我的第一篇博客：Next.js 与 Tailwind 搭建历程"
+title: "第一篇博客：Next.js 与 Tailwind 搭建历程"
 date: "2026-03-22"
 summary: "记录了我如何从零开始，使用 Next.js App Router 和 Tailwind CSS 搭建个人博客骨架的过程。"
 ---
